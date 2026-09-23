@@ -45,13 +45,14 @@ func StepOpenNemo() bootstrap.InitStep {
 	}
 }
 
-//go:generate go run github.com/SR-G/argweave/cmd/weavedoc -type=STLOptions -file=main.go -edit=../README.md -marker=weavedoc-bootstrap-stl -fields=long,short,type,env,required,default,description
-//go:generate go run github.com/SR-G/argweave/cmd/weavedoc -type=BaseOptions -file=/home/users/sergio/go/pkg/mod/github.com/!s!r-!g/bootstrap-library@v0.1.1/boostrapper/options.go -edit=../README.md -marker=weavedoc-bootstrap-base-options -fields=long,short,type,env,required,default,description
+//go:generate go run github.com/SR-G/argweave/cmd/weavedoc -type=STLOptions -file=main.go -edit=../README.md -marker=weavedoc-bootstrap-stl -fields=long,short,type,required,default,description
+//go:generate go run github.com/SR-G/argweave/cmd/weavedoc -type=BaseOptions -file=/home/users/sergio/go/pkg/mod/github.com/!s!r-!g/bootstrap-library@v0.1.1/boostrapper/options.go -edit=../README.md -marker=weavedoc-bootstrap-base-options -fields=long,short,type,required,default,description
 
 type STLOptions struct {
 	*bootstrap.BaseOptions
 
-	URL string `arg:"long=url,required,env=BOOTSTRAPPER_URL"` // e.g. printables.com/ ...
+	URL  string `arg:"long=url,required,env=BOOTSTRAPPER_URL"` // e.g. printables.com/ ...
+	Nemo bool   `arg:"long=nemo,env=BOOTSTRAPPER_NEMO,default=true"`
 }
 
 func main() {

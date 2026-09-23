@@ -52,7 +52,7 @@ func StepGoModInit(options *GoOptions) bootstrap.InitStep {
 	}
 }
 
-//go:generate go run github.com/SR-G/argweave/cmd/weavedoc -type=GoOptions -file=main.go -edit=../README.md -marker=weavedoc-bootstrap-go -fields=long,short,type,env,required,default,description
+//go:generate go run github.com/SR-G/argweave/cmd/weavedoc -type=GoOptions -file=main.go -edit=../README.md -marker=weavedoc-bootstrap-go -fields=long,short,type,required,default,description
 type GoOptions struct {
 	*bootstrap.BaseOptions
 
