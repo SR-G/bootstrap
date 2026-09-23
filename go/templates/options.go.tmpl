@@ -1,0 +1,43 @@
+package main
+
+import (
+	"github.com/caarlos0/env/v11"
+	"github.com/integrii/flaggy"
+)
+
+//go:generate envdoc -edit -output README.md -format markdown -types='*'
+type Options struct {
+	// Enable quiet output (final result to be retrieved only through exit value)
+	LogQuiet bool `env:"{{ envPrefix .ProjectName }}_QUIET" envDefault:"false"`
+	// Enable verbose / debug logging
+	LogDebug bool `env:"{{ envPrefix .ProjectName }}_VERBOSE" envDefault:"false"`
+	// Enable JSON formatted logs
+	JSONLogs bool `env:"{{ envPrefix .ProjectName }}_LOGS_JSON" envDefault:"false"`
+}
+
+func NewOptions() (*Options, error) {
+	o := &Options{}
+	if err := env.Parse(o); err != nil {
+		return o, err
+	}
+	return o, nil
+}
+
+func InitOptions() *Options {
+	options, _ := NewOptions()
+
+	flaggy.Bool(&options.LogQuiet, "q", "quiet", "Enable quiet output")
+	flaggy.Bool(&options.LogDebug, "v", "verbose", "Enable verbose / debug logging")
+	flaggy.Bool(&options.JSONLogs, "", "json-logs", "Enable JSON formatted logs")
+
+	flaggy.SetName(Version.ApplicationName)
+	flaggy.SetVersion(Version.String())
+	flaggy.Parse()
+
+	return options
+}
+
+func (o *Options) CheckConsistency() error {
+	// TODO: add your own option validation here
+	return nil
+}

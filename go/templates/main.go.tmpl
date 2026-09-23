@@ -1,0 +1,75 @@
+package main
+
+import (
+	"fmt"
+	"os"
+	"strings"
+	"time"
+
+	"github.com/SR-G/sul"
+	"github.com/rs/zerolog"
+)
+
+var logger zerolog.Logger
+
+// These variables are injected through the Makefile at compile time
+var BuildVersion = "0.0.1"
+var BuildVersionLabel = "DEV"
+var BuildCommit = ""
+var BuildCompilationTimestamp = ""
+
+var Version = sul.Version{ApplicationName: "{{ .ProjectName }}", Version: BuildVersion, VersionLabel: BuildVersionLabel, Commit: BuildCommit, CompilationTimestamp: BuildCompilationTimestamp}
+
+const (
+	OS_EXIT_OK              = 0
+	OS_EXIT_ERROR_PARAMTERS = 1
+)
+
+func newLogger(jsonLogs, debug, silent bool) zerolog.Logger {
+	if silent {
+		return zerolog.Nop()
+	}
+
+	var l zerolog.Logger
+	if jsonLogs {
+		l = zerolog.New(os.Stderr).With().Timestamp().Logger()
+	} else {
+		writer := zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339, NoColor: true}
+		writer.FormatLevel = func(i interface{}) string {
+			return strings.ToUpper(fmt.Sprintf("%-6s", i))
+		}
+		l = zerolog.New(writer).With().Timestamp().Logger()
+	}
+	if debug {
+		l = l.Level(zerolog.DebugLevel)
+	} else {
+		l = l.Level(zerolog.InfoLevel)
+	}
+	return l
+}
+
+func initLogger(options *Options) {
+	logger = newLogger(options.JSONLogs, options.LogDebug, options.LogQuiet)
+	if options.LogDebug {
+		logger.Debug().Msg("Verbose mode enabled")
+	}
+}
+
+func validateOptions(options *Options) {
+	if err := options.CheckConsistency(); err != nil {
+		logger.Error().Err(err).Msg("validation error detected")
+		os.Exit(OS_EXIT_ERROR_PARAMTERS)
+	}
+}
+
+func main() {
+	options := InitOptions()
+	initLogger(options)
+	validateOptions(options)
+
+	logger.Info().Str("version", Version.String()).Msg("{{ .ProjectName }} starting")
+
+	// TODO: implement your application logic here
+
+	os.Exit(OS_EXIT_OK)
+}

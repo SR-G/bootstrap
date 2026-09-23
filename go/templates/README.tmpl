@@ -1,0 +1,22 @@
+# {{ .ProjectName }}
+
+Generated with [github.com/SR-G/bootstrap](https://github.com/SR-G/bootstrap)'s `go` scaffolder.
+
+## Getting started
+
+```bash
+go mod tidy
+go run .
+```
+
+## Build
+
+```bash
+make build
+```
+
+## Environment variables
+
+- `{{ envPrefix .ProjectName }}_QUIET` (default: `false`) - Enable quiet output
+- `{{ envPrefix .ProjectName }}_VERBOSE` (default: `false`) - Enable verbose / debug logging
+- `{{ envPrefix .ProjectName }}_LOGS_JSON` (default: `false`) - Enable JSON formatted logs
