@@ -1,9 +1,7 @@
 github.com/BurntSushi/toml v1.6.0 h1:dRaEfpa2VI55EwlIW72hMRHdWouJeRF7TPYhI+AUQjk=
 github.com/BurntSushi/toml v1.6.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
-github.com/SR-G/argweave v0.1.1 h1:ktVyYFOIyZXFmJ+FKP7iwhiTkdm3NuO90gY2PQVY7wM=
-github.com/SR-G/argweave v0.1.1/go.mod h1:BOhGTdd+6cVY4yT4aglPJB7oIoAwJBRytq+bAG+qGro=
-github.com/SR-G/bootstrap-library v0.1.1 h1:APvEeNLCe2clkCd4Yqxz+D7sAUxWQ554QeAjjvfry2E=
-github.com/SR-G/bootstrap-library v0.1.1/go.mod h1:jjO2DcYjcscCCp6FI5cTLxaXyZcakr9lsWLKF+6YHLs=
+github.com/SR-G/argweave v0.1.2 h1:kOIPXZjFBK3VvgJThGZ5BeA+R2Cdqhb1wnQq5oFFj40=
+github.com/SR-G/argweave v0.1.2/go.mod h1:BOhGTdd+6cVY4yT4aglPJB7oIoAwJBRytq+bAG+qGro=
 github.com/SR-G/sul v0.0.14 h1:vzli6WS4sz5Z09yiDpg2vpvviik5bF6wugwFOCW2mQ4=
 github.com/SR-G/sul v0.0.14/go.mod h1:+a4pHMBk+s1UXgASKswmH/XVFJyCe7bumYqYmtlNrM0=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=

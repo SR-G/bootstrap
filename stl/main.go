@@ -17,23 +17,27 @@ type TemplateVariables struct {
 	URL         string
 }
 
-func DefaultSTLSteps(templateVariables any, options *STLOptions) []bootstrap.InitStep {
-	return []bootstrap.InitStep{
-		bootstrap.StepInitOutputDirectory(),
-		bootstrap.StepRenderTemplates([]bootstrap.FileToGenerate{
+func DefaultSTLSteps(templateVariables any, options *STLOptions) []bootstrap.InitStep[STLOptions] {
+	return []bootstrap.InitStep[STLOptions]{
+		bootstrap.StepInitOutputDirectory[STLOptions](),
+		bootstrap.StepRenderTemplates[STLOptions]([]bootstrap.FileToGenerate{
 			{Template: "templates/README.tmpl", Output: "README.md"},
 		},
 			&templatesFS,
 			&templateVariables,
 		),
-		StepOpenNemo(),
+		StepOpenNemo(options),
 	}
 }
 
-func StepOpenNemo() bootstrap.InitStep {
-	return bootstrap.InitStep{
+func StepOpenNemo(options *STLOptions) bootstrap.InitStep[STLOptions] {
+	return bootstrap.InitStep[STLOptions]{
 		Name: "Open NEMO",
-		Run: func(ctx *bootstrap.StepExecutionContext) error {
+		Run: func(ctx *bootstrap.StepExecutionContext[STLOptions]) error {
+			if !ctx.Options.Nemo {
+				return nil
+			}
+
 			nemoBinary := "nemo"
 			_, err := exec.LookPath(nemoBinary)
 			if err != nil {
@@ -49,21 +53,26 @@ func StepOpenNemo() bootstrap.InitStep {
 //go:generate go run github.com/SR-G/argweave/cmd/weavedoc -type=BaseOptions -file=/home/users/sergio/go/pkg/mod/github.com/!s!r-!g/bootstrap-library@v0.1.1/boostrapper/options.go -edit=../README.md -marker=weavedoc-bootstrap-base-options -fields=long,short,type,required,default,description
 
 type STLOptions struct {
-	*bootstrap.BaseOptions
+	bootstrap.BaseOptions
 
-	URL  string `arg:"long=url,required,env=BOOTSTRAPPER_URL"` // e.g. printables.com/ ...
-	Nemo bool   `arg:"long=nemo,env=BOOTSTRAPPER_NEMO,default=true"`
+	URL  string `arg:"group=STL,long=url,required,env=BOOTSTRAPPER_URL,description=URL of the considered model"` // e.g. printables.com/ ...
+	Nemo bool   `arg:"group=STL,long=nemo,env=BOOTSTRAPPER_NEMO,default=true,description=Should the opening of a nemo explorer window be triggered"`
 }
 
 func main() {
 	bootstrapper := &bootstrap.Bootstrapper[STLOptions]{}
-	if cr, err := bootstrapper.Init(); err != nil {
+	cr, err := bootstrapper.Init()
+	if err != nil {
 		bootstrapper.Context.Logger.Error().Err(err).Msg("Fail at start time")
 		os.Exit(cr)
 	}
-	templateVariables := TemplateVariables{
-		ProjectName: bootstrapper.Opts.ProjectName,
-		URL:         bootstrapper.Opts.URL,
+	if cr == bootstrap.INIT_HELP_REQUESTED {
+		os.Exit(0)
+	} else {
+		templateVariables := TemplateVariables{
+			ProjectName: bootstrapper.Opts.ProjectName,
+			URL:         bootstrapper.Opts.URL,
+		}
+		os.Exit(bootstrapper.Generate(DefaultSTLSteps(templateVariables, bootstrapper.Opts)))
 	}
-	os.Exit(bootstrapper.Generate(DefaultSTLSteps(templateVariables, bootstrapper.Opts)))
 }

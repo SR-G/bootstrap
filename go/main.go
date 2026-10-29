@@ -19,10 +19,10 @@ type TemplateVariables struct {
 }
 
 // DefaultSteps returns the standard list of steps used to bootstrap a new project.
-func DefaultGoSteps(templateVariables any, options *GoOptions) []bootstrap.InitStep {
-	return []bootstrap.InitStep{
-		bootstrap.StepInitOutputDirectory(),
-		bootstrap.StepRenderTemplates(
+func DefaultGoSteps(templateVariables any, options *GoOptions) []bootstrap.InitStep[GoOptions] {
+	return []bootstrap.InitStep[GoOptions]{
+		bootstrap.StepInitOutputDirectory[GoOptions](),
+		bootstrap.StepRenderTemplates[GoOptions](
 			[]bootstrap.FileToGenerate{
 				{Template: "templates/gomod.tmpl", Output: "go.mod"},
 				{Template: "templates/gitignore.tmpl", Output: ".gitignore"},
@@ -39,10 +39,10 @@ func DefaultGoSteps(templateVariables any, options *GoOptions) []bootstrap.InitS
 }
 
 // GoModInitStep runs "go mod init <ModulePath>" in WorkDir. Does nothing if a go.mod already exists.
-func StepGoModInit(options *GoOptions) bootstrap.InitStep {
-	return bootstrap.InitStep{
+func StepGoModInit(options *GoOptions) bootstrap.InitStep[GoOptions] {
+	return bootstrap.InitStep[GoOptions]{
 		Name: "Initialize go.mod",
-		Run: func(ctx *bootstrap.StepExecutionContext) error {
+		Run: func(ctx *bootstrap.StepExecutionContext[GoOptions]) error {
 			if sul.FileExists(filepath.Join(ctx.OutputDir, "go.mod")) {
 				return nil
 			} else {
@@ -54,7 +54,7 @@ func StepGoModInit(options *GoOptions) bootstrap.InitStep {
 
 //go:generate go run github.com/SR-G/argweave/cmd/weavedoc -type=GoOptions -file=main.go -edit=../README.md -marker=weavedoc-bootstrap-go -fields=long,short,type,required,default,description
 type GoOptions struct {
-	*bootstrap.BaseOptions
+	bootstrap.BaseOptions
 
 	ModulePath string `arg:"long=module,required,env=BOOTSTRAPPER_MODULE_PATH"` // e.g. github.com/SR-G/my-new-app
 }

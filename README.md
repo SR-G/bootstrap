@@ -20,7 +20,8 @@
 Each time something is commited (new templates, ...), execute : 
 
 ```bash
-go install github.com/SR-G/bootstrap@latest 
+# GOPROXY=direct is needed to retrieve the latest version (if no versions are defined)
+GOPROXY=direct go install github.com/SR-G/bootstrap@latest 
 ```
 
 Then you can proceed with the individual commands below.
